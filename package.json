@@ -1,0 +1,27 @@
+{
+  "name": "fsai",
+  "version": "1.0.0",
+  "description": "testing application",
+  "keywords": [],
+  "license": "ISC",
+  "author": "Rajesh",
+  "type": "commonjs",
+  "main": "server-new.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server-new.js",
+    "server": "nodemon server-new.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "node": "^22.22.1",
+    "openai": "^6.27.0",
+    "server.js": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
