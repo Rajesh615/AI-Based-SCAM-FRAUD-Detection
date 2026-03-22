@@ -1,0 +1,49 @@
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#4facfe,#00f2fe);
+  text-align:center;
+}
+
+.card, .result-card {
+  background:white;
+  width:60%;
+  margin:20px auto;
+  padding:20px;
+  border-radius:10px;
+}
+
+textarea {
+  width:90%;
+  height:100px;
+}
+
+button {
+  background:red;
+  color:white;
+  padding:10px;
+}
+
+.loading {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {opacity: 0.5;}
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .card, .result-card {
+    width: 90%;
+  }
+
+  footer {
+  margin-top: 30px;
+  color: white;
+  font-size: 14px;
+}
+
+.history-section {
+  margin-top: 20px;
+}
+}
