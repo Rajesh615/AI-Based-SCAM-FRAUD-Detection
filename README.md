@@ -1,70 +1,114 @@
-# Getting Started with Create React App
+# 🛡 AI Scam Detector
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack MERN + Machine Learning project that detects scam messages using an ML model and provides explanations.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Features
 
-### `npm start`
+- 🔐 User Authentication (Login / Signup)
+- 🧠 AI + ML Scam Detection
+- 📊 Scam Probability Prediction
+- 🚨 Suspicious Keyword Detection
+- 💡 Explanation of Results
+- 📂 Admin Panel (View all checks)
+- ☰ Sidebar Navigation
+- 🎨 Clean Chat-style UI
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🧠 Machine Learning
 
-### `npm test`
+- Model: Logistic Regression
+- Vectorizer: TF-IDF
+- Language: Python (Scikit-learn)
+- Output:
+  - Probability %
+  - Scam / Safe Result
+  - Suspicious Words
+  - Explanation
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ⚙️ Tech Stack
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| Layer      | Technology |
+|-----------|-----------|
+| Frontend  | React.js |
+| Backend   | Node.js + Express |
+| Database  | MongoDB |
+| ML Model  | Python (Scikit-learn) |
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📸 Screenshots
 
-### `npm run eject`
+### 🔐 Login Page
+![Login](screenshots/login.png)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 📝 Signup Page
+![Signup](screenshots/signup.png)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 🏠 Dashboard
+![Dashboard](screenshots/dashboard.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 🤖 ML Result
+![ML Result](screenshots/ml-result.png)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### ☰ Sidebar
+![Sidebar](screenshots/sidebar.png)
 
-## Learn More
+### 🛠 Admin Panel
+![Admin](screenshots/admin.png)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ▶️ How to Run
 
-### Code Splitting
+### 1️⃣ Clone Repository
+```bash
+git clone https://github.com/YOUR-USERNAME/AI-Scam-Detector.git
+cd AI-Scam-Detector
+2️⃣ Backend Setup
+Bash
+cd backend
+npm install
+node server.js
+3️⃣ Frontend Setup
+Bash
+cd frontend
+npm install
+npm start
+4️⃣ ML Setup
+Bash
+cd backend/ml
+pip install pandas scikit-learn
+python train_model.py
+📂 Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+AI-Scam-Detector/
+ ├── backend/
+ │    ├── models/
+ │    ├── routes/
+ │    ├── ml/
+ │    └── server.js
+ ├── frontend/
+ ├── screenshots/
+ └── README.md
+🎯 Output Example
+Input: "You won ₹5,00,000 lottery click here urgently"
+Output:
+Scam Probability: 85%
+Result: Scam
+Suspicious Words: lottery, urgent, click
+Explanation provided
+👨‍💻 Author
+Developed by Seenu Y
+⭐ Future Improvements
+Improve ML accuracy with larger dataset
+Deploy project online
+Add real-time chat UI
+Mobile responsiveness
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+git clone
+https://github.com/Rajesh615/AI-Based-SCAM-FRAUD-Detection.git
