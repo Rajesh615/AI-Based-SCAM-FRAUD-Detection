@@ -1,159 +1,163 @@
-import { useEffect, useState } from "react";
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer
-} from "recharts";
+import React, { useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import "./App.css";
 
 function Dashboard() {
-  const [data, setData] = useState([]);
-  const [stats, setStats] = useState({
-    total: 0,
-    scam: 0,
-    safe: 0
-  });
+  const [message, setMessage] = useState("");
+  const [result, setResult] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleCheck = async () => {
+    if (!message.trim()) {
+      alert("Please enter a message");
+      return;
+    }
 
-  const fetchData = async () => {
     try {
+      setLoading(true);
+
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:3600/admin/scams", {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+        "http://localhost:5000/api/check",
+        { message },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
-      const result = await res.json();
-
-      let scam = 0;
-      let safe = 0;
-
-      result.forEach(item => {
-        if (item.result === "Scam") scam++;
-        else safe++;
-      });
-
-      setStats({
-        total: result.length,
-        scam,
-        safe
-      });
-
-      setData([
-        { name: "Safe", value: safe },
-        { name: "Scam", value: scam }
-      ]);
+      setResult(res.data);
+      setMessage("");
 
     } catch (err) {
-      console.log(err);
+      console.log("Check error:", err.response?.data || err.message);
+      alert("Something went wrong ❌");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>📊 Scam Analytics Dashboard</h1>
+    <div className="chat-container">
 
-      {/* 💎 CARDS */}
-      <div style={cardContainer}>
-
-        {/* CARD 1 */}
-        <div
-          style={glassCard}
-          onMouseEnter={(e)=>e.currentTarget.style.transform="scale(1.05)"}
-          onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
-        >
-          <h3>Total Checks</h3>
-          <p>{stats.total}</p>
-        </div>
-
-        {/* CARD 2 */}
-        <div
-          style={glassCard}
-          onMouseEnter={(e)=>e.currentTarget.style.transform="scale(1.05)"}
-          onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
-        >
-          <h3>Scams Detected</h3>
-          <p>{stats.scam}</p>
-        </div>
-
-        {/* CARD 3 */}
-        <div
-          style={glassCard}
-          onMouseEnter={(e)=>e.currentTarget.style.transform="scale(1.05)"}
-          onMouseLeave={(e)=>e.currentTarget.style.transform="scale(1)"}
-        >
-          <h3>Safe Messages</h3>
-          <p>{stats.safe}</p>
-        </div>
-
+      {/* ☰ MENU BUTTON */}
+      <div className="menu-btn" onClick={() => setMenuOpen(true)}>
+        &#9776;
       </div>
 
-      {/* 📊 CHART */}
-      <div style={chartCard}>
-        <h2>📈 Scam vs Safe</h2>
+      {/* OVERLAY */}
+      {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)}></div>}
 
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" stroke="#fff" />
-            <YAxis stroke="#fff" />
-            <Tooltip />
-            <Bar dataKey="value" />
-          </BarChart>
-        </ResponsiveContainer>
+      {/* SIDEBAR */}
+      <div className={`sidebar ${menuOpen ? "open" : ""}`}>
+        <h3>Menu</h3>
+
+        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+        <Link to="/dashboard" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+        <Link to="/admin" onClick={() => setMenuOpen(false)}>Admin</Link>
+
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            window.location.href = "/";
+          }}
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* 🔥 HEADER */}
+      <h1 className="title">🛡 AI Scam Detector</h1>
+
+      {/* 🔥 RESULT AREA */}
+      <div className="chat-messages">
+        {!result ? (
+          <p className="empty">Start detecting scams 💡</p>
+        ) : (
+          <div
+            className="result-card"
+            style={{
+              border:
+                result?.probability > 70
+                  ? "2px solid #ff4d4d"
+                  : result?.probability > 40
+                  ? "2px solid #f1c40f"
+                  : "2px solid #39ff14",
+            }}
+          >
+            {/* ✅ Probability with color */}
+            <h2
+              style={{
+                color:
+                  result.probability > 70
+                    ? "#ff4d4d"
+                    : result.probability > 40
+                    ? "#f1c40f"
+                    : "#39ff14",
+              }}
+            >
+              Scam Probability: {result.probability}%
+            </h2>
+
+            {/* ✅ Suspicious words highlight */}
+            {result.keywords && (
+              <p>
+                <b>Suspicious Words:</b>{" "}
+                {result.keywords.map((word, i) => (
+                  <span key={i} style={{ color: "#ff4d4d", marginRight: "6px" }}>
+                    {word}
+                  </span>
+                ))}
+              </p>
+            )}
+
+            {/* ✅ Result color */}
+            <p>
+              <b>Result:</b>{" "}
+              <span
+                style={{
+                  color: result.result === "Scam" ? "#ff4d4d" : "#39ff14",
+                  fontWeight: "bold",
+                }}
+              >
+                {result.result}
+              </span>
+            </p>
+
+            {/* ✅ Explanation */}
+            {result.explanation && (
+              <>
+                <p><b>Explanation:</b></p>
+                <ul>
+                  {result.explanation.map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* 🔥 INPUT AREA */}
+      <div className="chat-input">
+        <input
+          type="text"
+          placeholder="Type your message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+
+        <button onClick={handleCheck}>
+          {loading ? "Checking..." : "Send"}
+        </button>
       </div>
     </div>
   );
 }
-
-/* 🌈 PAGE BACKGROUND */
-const pageStyle = {
-  minHeight: "100vh",
-  padding: "30px",
-  background: "linear-gradient(135deg, #00c6ff, #0072ff)",
-  color: "white"
-};
-
-/* 💎 CARD CONTAINER */
-const cardContainer = {
-  display: "flex",
-  gap: "20px",
-  marginTop: "20px",
-  flexWrap: "wrap"
-};
-
-/* 🧊 GLASS CARD */
-const glassCard = {
-  flex: "1",
-  minWidth: "200px",
-  padding: "20px",
-  borderRadius: "15px",
-  backdropFilter: "blur(12px)",
-  background: "rgba(255,255,255,0.15)",
-  border: "1px solid rgba(255,255,255,0.3)",
-  boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-  textAlign: "center",
-  transition: "transform 0.3s ease",
-  cursor: "pointer"
-};
-
-/* 📊 CHART CARD */
-const chartCard = {
-  marginTop: "40px",
-  padding: "20px",
-  borderRadius: "15px",
-  backdropFilter: "blur(12px)",
-  background: "rgba(255,255,255,0.15)",
-  border: "1px solid rgba(255,255,255,0.3)",
-  boxShadow: "0 8px 32px rgba(0,0,0,0.2)"
-};
-
-/* 🧠 TITLE */
-const titleStyle = {
-  textAlign: "center",
-  fontSize: "32px"
-};
 
 export default Dashboard;

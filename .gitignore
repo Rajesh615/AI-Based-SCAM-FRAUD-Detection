@@ -1,4 +1,15 @@
-node_modules
+# Root dependencies
+node_modules/
+
+# Environment files
 .env
-frontend/node_modules
-frontend/build
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+
+# Backend
+backend/node_modules/
+
+# Logs
+npm-debug.log*
