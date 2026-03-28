@@ -46,16 +46,17 @@ app.post("/api/check", async (req, res) => {
 
       // save to DB
       const newScam = await Scam.create({
-        message,
-        result: result.result,
-        probability: result.probability,
-      });
+  message,
+  result: result.prediction === 1 ? "Scam" : "Safe",
+  probability: Math.round(result.probability * 100),
+});
 
       res.json({
-        message,
-        ...result
-      });
-    });
+  probability: Math.round(result.probability * 100),
+  result: result.prediction === 1 ? "Scam" : "Safe",
+  keywords: result.keywords,
+  explanation: result.explanation
+});
 
   } catch (error) {
     console.log(error);
