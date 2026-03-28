@@ -3,15 +3,16 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const { exec } = require("child_process");
+const path = require("path");
 
 const Scam = require("./models/Scam");
-
 
 const app = express();
 
 // ✅ MIDDLEWARE
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "*",
   credentials: true
 }));
 app.use(express.json());
@@ -20,49 +21,65 @@ app.use(express.json());
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
-
 // ✅ ROOT
 app.get("/", (req, res) => {
   res.send("🚀 AI Scam Detector Backend Running");
 });
 
 // ✅ CHECK API
-const { exec } = require("child_process");
-const path = require("path");
-
 app.post("/api/check", async (req, res) => {
   try {
     const { message } = req.body;
 
+    if (!message) {
+      return res.status(400).json({ message: "Message is required" });
+    }
+
     const scriptPath = path.join(__dirname, "ml", "predict.py");
 
-    exec(`python3 "${scriptPath}" "${message.replace(/"/g, '\\"')}"`, async (err, stdout, stderr) => {
-      if (err) {
-        console.log("❌ Python Error:", stderr);
-        return res.status(500).json({ message: "ML error" });
+    exec(
+      `python3 "${scriptPath}" "${message.replace(/"/g, '\\"')}"`,
+      async (err, stdout, stderr) => {
+
+        if (err) {
+          console.log("❌ Python Error:", stderr);
+          return res.status(500).json({ message: "ML error" });
+        }
+
+        try {
+          const result = JSON.parse(stdout);
+
+          const probability = Math.round(result.probability * 100);
+          const prediction = result.prediction === 1 ? "Scam" : "Safe";
+
+          // ✅ save to DB
+          await Scam.create({
+            message,
+            result: prediction,
+            probability: probability
+          });
+
+          // ✅ send response
+          res.json({
+            probability: probability,
+            result: prediction,
+            keywords: result.keywords || [],
+            explanation: result.explanation || []
+          });
+
+        } catch (parseError) {
+          console.log("❌ JSON Parse Error:", parseError);
+          return res.status(500).json({ message: "Invalid ML output" });
+        }
       }
-
-      const result = JSON.parse(stdout);
-
-      // save to DB
-      const newScam = await Scam.create({
-  message,
-  result: result.prediction === 1 ? "Scam" : "Safe",
-  probability: Math.round(result.probability * 100),
-});
-
-      res.json({
-  probability: Math.round(result.probability * 100),
-  result: result.prediction === 1 ? "Scam" : "Safe",
-  keywords: result.keywords,
-  explanation: result.explanation
-});
+    );
 
   } catch (error) {
-    console.log(error);
+    console.log("❌ Server Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 // ✅ ADMIN API
 app.get("/api/admin", async (req, res) => {
   try {
