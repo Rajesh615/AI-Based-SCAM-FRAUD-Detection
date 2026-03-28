@@ -12,7 +12,7 @@ const app = express();
 
 // ✅ MIDDLEWARE
 app.use(cors({
-  origin: "*",
+  origin: ["http://localhost:3000","https://ai-based-scam-fraud-detection.onrender.com"],
   credentials: true
 }));
 app.use(express.json());
