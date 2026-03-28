@@ -12,7 +12,7 @@ function Admin() {
       const token = localStorage.getItem("token");
 
       // ✅ FIXED URL
-      const res = await fetch("http://localhost:5000/api/admin", {
+      const res = await fetch("https://ai-based-scam-fraud-detection.onrender.com/api/admin", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

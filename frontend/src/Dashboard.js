@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "./api";
 import { Link } from "react-router-dom";
 import "./App.css";
 
@@ -20,8 +20,8 @@ function Dashboard() {
 
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        "http://localhost:5000/api/check",
+      const res = await API.post(
+        "/check",
         { message },
         {
           headers: {
@@ -89,7 +89,6 @@ function Dashboard() {
                   : "2px solid #39ff14",
             }}
           >
-            {/* ✅ Probability with color */}
             <h2
               style={{
                 color:
@@ -103,7 +102,6 @@ function Dashboard() {
               Scam Probability: {result.probability}%
             </h2>
 
-            {/* ✅ Suspicious words highlight */}
             {result.keywords && (
               <p>
                 <b>Suspicious Words:</b>{" "}
@@ -115,7 +113,6 @@ function Dashboard() {
               </p>
             )}
 
-            {/* ✅ Result color */}
             <p>
               <b>Result:</b>{" "}
               <span
@@ -128,7 +125,6 @@ function Dashboard() {
               </span>
             </p>
 
-            {/* ✅ Explanation */}
             {result.explanation && (
               <>
                 <p><b>Explanation:</b></p>

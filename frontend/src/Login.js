@@ -11,7 +11,7 @@ function Login() {
   const handleLogin = async () => {
     try {
       // ✅ FIXED URL
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post("https://ai-based-scam-fraud-detection.onrender.com/api/auth/login", {
         email,
         password,
       });
