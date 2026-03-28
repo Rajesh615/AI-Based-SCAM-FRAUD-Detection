@@ -10,33 +10,19 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
 
   const handleCheck = async () => {
-    if (!message.trim()) {
-      alert("Please enter a message");
-      return;
-    }
-
     try {
       setLoading(true);
 
-      const token = localStorage.getItem("token");
-
-      const res = await API.post(
-        "/check",
-        { message },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await API.post("/api/check", {
+        message: message
+      });
 
       setResult(res.data);
-      setMessage("");
+      setLoading(false);
 
-    } catch (err) {
-      console.log("Check error:", err.response?.data || err.message);
-      alert("Something went wrong ❌");
-    } finally {
+    } catch (error) {
+      console.error(error);
+      alert("Server waking up... please try again in a few seconds");
       setLoading(false);
     }
   };

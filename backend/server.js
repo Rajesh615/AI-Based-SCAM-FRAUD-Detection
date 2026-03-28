@@ -49,7 +49,7 @@ app.post("/api/check", async (req, res) => {
         try {
           const result = JSON.parse(stdout);
 
-          const probability = Math.round(result.probability * 100);
+          const probability = Math.round(result.probability);
           const prediction = result.prediction === 1 ? "Scam" : "Safe";
 
           // ✅ save to DB

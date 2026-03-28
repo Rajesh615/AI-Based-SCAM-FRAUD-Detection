@@ -1,11 +1,8 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000"
+  baseURL: "https://ai-based-scam-fraud-detection.onrender.com",
+  timeout: 60000
 });
-
-export const checkMessage = (message) => {
-  return API.post("/api/check", { message });
-};
 
 export default API;
