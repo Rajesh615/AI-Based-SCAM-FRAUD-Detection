@@ -36,7 +36,7 @@ app.post("/api/check", async (req, res) => {
 
     const scriptPath = path.join(__dirname, "ml", "predict.py");
 
-    exec(`python "${scriptPath}" "${message.replace(/"/g, '\\"')}"`, async (err, stdout, stderr) => {
+    exec(`python3 "${scriptPath}" "${message.replace(/"/g, '\\"')}"`, async (err, stdout, stderr) => {
       if (err) {
         console.log("❌ Python Error:", stderr);
         return res.status(500).json({ message: "ML error" });
