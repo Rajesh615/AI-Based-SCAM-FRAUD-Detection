@@ -5,7 +5,7 @@ import "./App.css";
 
 function Dashboard() {
   const [message, setMessage] = useState("");
-  const [result, setResult] = useState(null);
+  const [, setResult] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
