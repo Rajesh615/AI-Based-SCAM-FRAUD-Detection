@@ -9,6 +9,11 @@ import {
 
 function Admin() {
   const [data, setData] = useState([]);
+  const [stats, setStats] = useState({
+    total: 0,
+    scam: 0,
+    safe: 0
+  });
 
   useEffect(() => {
     fetchData();
@@ -16,37 +21,28 @@ function Admin() {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch("https://ai-based-scam-fraud-detection.onrender.com/api/admin", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "https://ai-based-scam-fraud-detection.onrender.com/api/admin/stats"
+      );
 
       const result = await res.json();
 
-      if (Array.isArray(result)) {
-        setData(result);
-      } else if (Array.isArray(result.data)) {
-        setData(result.data);
-      } else {
-        setData([]);
-      }
+      // ✅ correct handling
+      setData(result.data || []);
+      setStats({
+        total: result.total || 0,
+        scam: result.scam || 0,
+        safe: result.safe || 0
+      });
 
     } catch (err) {
       console.error("Admin fetch error:", err);
     }
   };
 
-  // 🔥 CALCULATIONS
-  const total = data.length;
-  const scamCount = data.filter(item => item.result === "Scam").length;
-  const safeCount = data.filter(item => item.result === "Safe").length;
-
   const chartData = [
-    { name: "Scam", value: scamCount },
-    { name: "Safe", value: safeCount }
+    { name: "Scam", value: stats.scam },
+    { name: "Safe", value: stats.safe }
   ];
 
   const COLORS = ["#ff4d4d", "#39ff14"];
@@ -55,18 +51,18 @@ function Admin() {
     <div style={{ padding: "20px" }}>
       <h1>🛠 Admin Panel</h1>
 
-      {/* 🔥 STATS */}
+      {/* ✅ STATS */}
       <div style={{ marginBottom: "20px" }}>
-        <p><b>Total Messages:</b> {total}</p>
-        <p><b>Scam:</b> {scamCount}</p>
-        <p><b>Safe:</b> {safeCount}</p>
+        <p><b>Total Messages:</b> {stats.total}</p>
+        <p><b>Scam:</b> {stats.scam}</p>
+        <p><b>Safe:</b> {stats.safe}</p>
       </div>
 
-      {/* 🔥 CHART */}
+      {/* ✅ CHART */}
       <div style={{ marginBottom: "30px" }}>
         <h3>📊 Scam Analysis</h3>
 
-        {total > 0 && (
+        {stats.total > 0 && (
           <PieChart width={300} height={300}>
             <Pie
               data={chartData}
@@ -86,7 +82,7 @@ function Admin() {
         )}
       </div>
 
-      {/* 🔥 DATA LIST */}
+      {/* ✅ DATA LIST */}
       {data.length === 0 ? (
         <p>No data available</p>
       ) : (
