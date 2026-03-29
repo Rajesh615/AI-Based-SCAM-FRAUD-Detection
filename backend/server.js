@@ -44,6 +44,9 @@ app.use(express.json());
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
+const adminRoutes = require("./routes/admin");
+app.use("/api/admin", adminRoutes);
+
 // ✅ ROOT
 app.get("/", (req, res) => {
   res.send("🚀 AI Scam Detector Backend Running");
