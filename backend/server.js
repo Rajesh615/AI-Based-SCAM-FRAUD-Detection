@@ -40,7 +40,7 @@ app.post("/api/check", async (req, res) => {
     // ✅ USE FULL PATH (IMPORTANT FIX)
     const scriptPath = path.join(__dirname, "ml", "predict.py");
 
-    console.log9("Running python from:", scriptPath);
+    console.log("Running python from:", scriptPath);
 
      const py = spawn("python", [scriptPath, message]);
 
