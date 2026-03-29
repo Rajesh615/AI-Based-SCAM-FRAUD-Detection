@@ -68,7 +68,7 @@ app.post("/api/check", async (req, res) => {
     let data = "";
 
     py.stdout.on("data", (chunk) => {
-      console,log("PYTHON OUTPUT:",chunk.toString());
+      console.log("PYTHON OUTPUT:",chunk.toString());
       data+= chunk.tostring();
     });
 
