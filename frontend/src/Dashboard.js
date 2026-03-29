@@ -10,23 +10,36 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
 
   const handleCheck = async () => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const res = await API.post("/api/check", {
-        message: message
-      });
-
-      setResult(res.data);
+    if (!message.trim()) {
+      alert("Please enter a message");
       setLoading(false);
-
-    } catch (error) {
-      console.error(error);
-      alert("Server waking up... please try again in a few seconds");
-      setLoading(false);
+      return;
     }
-  };
 
+    const res = await API.post("/api/check", {
+      message: message
+    });
+
+    console.log("API RESPONSE:", res.data);
+
+    setResult(res.data);
+    setLoading(false);
+
+  } catch (error) {
+    console.error("FULL ERROR:", error);
+
+    if (error.response) {
+      alert("Server error: " + error.response.data.message);
+    } else {
+      alert("Server waking up... wait 30 seconds and try again");
+    }
+
+    setLoading(false);
+  }
+};
   return (
     <div className="chat-container">
 
