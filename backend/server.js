@@ -11,8 +11,29 @@ const Scam = require("./models/Scam");
 const app = express();
 
 // ✅ MIDDLEWARE
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://profound-blancmange-e44ced.netlify.app"
+];
+
 app.use(cors({
-  origin: true,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  },
+  credentials: true
+}));
+app.options("*", cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
