@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const { exec } = require("child_process");
+const { spawn } = require("child_process");
 const path = require("path");
 
 const Scam = require("./models/Scam");
@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 
 // ✅ CHECK API
 app.post("/api/check", async (req, res) => {
+  console.log("API HIT");
   try {
     const { message } = req.body;
 
@@ -35,58 +36,62 @@ app.post("/api/check", async (req, res) => {
       return res.status(400).json({ message: "Message is required" });
     }
 
+
+    // ✅ USE FULL PATH (IMPORTANT FIX)
     const scriptPath = path.join(__dirname, "ml", "predict.py");
 
-    exec(
-      `python3 "${scriptPath}" "${message.replace(/"/g, '\\"')}"`,
-      async (err, stdout, stderr) => {
+    console.log9("Running python from:", scriptPath);
 
-        if (err) {
-          console.log("❌ Python Error:", stderr);
-          return res.status(500).json({ message: "ML error" });
+     const py = spawn("python", [scriptPath, message]);
+
+    let data = "";
+
+    py.stdout.on("data", (chunk) => {
+      console,log("PYTHON OUTPUT:",chunk.toString());
+      data+= chunk.tostring();
+    });
+
+    py.stderr.on("data", (err) => {
+      console.log("❌ Python Error:", err.toString());
+    });
+
+    py.on("close", async () => {
+      try {
+        const result = JSON.parse(data);
+
+        const probability = Math.round(result.probability);
+
+        // ✅ YOUR UI-BASED LOGIC (GOOD 👍)
+        let prediction;
+        if (probability > 60) {
+          prediction = "Scam";
+        } else if (probability > 40) {
+          prediction = "Suspicious";
+        } else {
+          prediction = "Safe";
         }
 
-        try {
-          const result = JSON.parse(stdout);
+        await Scam.create({
+          message,
+          result: prediction,
+          probability
+        });
 
-          const probability = Math.round(result.probability);
-          const prediction = result.prediction === 1 ? "Scam" : "Safe";
+        res.json({
+          probability,
+          result: prediction,
+          keywords: result.keywords || [],
+          explanation: result.explanation || []
+        });
 
-          // ✅ save to DB
-          await Scam.create({
-            message,
-            result: prediction,
-            probability: probability
-          });
-
-          // ✅ send response
-          res.json({
-            probability: probability,
-            result: prediction,
-            keywords: result.keywords || [],
-            explanation: result.explanation || []
-          });
-
-        } catch (parseError) {
-          console.log("❌ JSON Parse Error:", parseError);
-          return res.status(500).json({ message: "Invalid ML output" });
-        }
+      } catch (err) {
+        console.log("❌ Parse Error:", err);
+        res.status(500).json({ message: "ML parse error" });
       }
-    );
+    });
 
-  } catch (error) {
-    console.log("❌ Server Error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// ✅ ADMIN API
-app.get("/api/admin", async (req, res) => {
-  try {
-    const data = await Scam.find().sort({ createdAt: -1 });
-    res.json(data);
   } catch (err) {
-    console.log("❌ Admin error:", err.message);
+    console.log("❌ Server Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });

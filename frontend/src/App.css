@@ -4,6 +4,7 @@ body {
   font-family: "Segoe UI", sans-serif;
   background: #0d1117;
   color: white;
+  overflow-x: hidden;
 }
 
 /* 🔐 AUTH (LOGIN / SIGNUP) */
@@ -56,7 +57,6 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-left: 0; /* ✅ FIXED */
 }
 
 /* 🔥 HEADER */
@@ -69,13 +69,26 @@ body {
 .chat-messages {
   flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;   /* 🔥 FIX */
   align-items: center;
-  padding-bottom: 80px; /* ✅ prevents overlap */
+
+  gap: 20px;                     /* 🔥 spacing */
+  padding: 20px;
+  padding-bottom: 120px;         /* 🔥 space for input */
 }
 
 .empty {
   opacity: 0.7;
+}
+
+/* 🔥 MESSAGE BOX (NEW FIX) */
+.message-box {
+  background: #0d1117;
+  padding: 15px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 100%;
 }
 
 /* 🔥 RESULT CARD */
@@ -83,25 +96,34 @@ body {
   background: #161b22;
   padding: 20px;
   border-radius: 10px;
-  width: 400px;
+
+  width: 100%;
+  max-width: 400px;
+
+  margin: 0 auto;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-/* 🔥 INPUT AREA (UPDATED FIX) */
+/* 🔥 INPUT AREA (FINAL FIX) */
 .chat-input {
   position: fixed;
 
-  bottom: 20px;              /* 🔥 above taskbar */
-  left: 50%;                /* 🔥 center horizontally */
+  bottom: 15px;
+  left: 50%;
   transform: translateX(-50%);
 
-  width: calc(100% - 40px); /* 🔥 margin from both sides */
-  max-width: 1000px;
+  width: 90%;
+  max-width: 900px;
 
   display: flex;
   padding: 10px;
 
   background: #161b22;
   border-radius: 12px;
+
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 
   z-index: 999;
 }
@@ -122,6 +144,29 @@ body {
   border-radius: 8px;
   color: white;
   cursor: pointer;
+}
+
+.chat-input button:hover {
+  background: #ff1a1a;
+}
+
+/* 🔥 TOP ACTION BUTTONS (NEW FIX) */
+.top-actions {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.top-actions button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #2f81f7;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 /* 🔥 HOME PAGE */
@@ -161,7 +206,6 @@ body {
   cursor: pointer;
 }
 
-/* keep your colors */
 .home-buttons button:first-child {
   background: #39ff14;
 }
@@ -198,17 +242,25 @@ body {
 .sidebar {
   position: fixed;
   top: 0;
-  left: -250px;
+  left: -260px;
   width: 250px;
   height: 100%;
   background: #161b22;
   padding: 20px;
   transition: 0.3s;
   z-index: 1002;
+
+  overflow: hidden;
+}
+.sidebar.open {
+  left: 0;
+}
+.sidebar{
+  visibility: hidden;
 }
 
 .sidebar.open {
-  left: 0;
+  visibility: visible;
 }
 
 .sidebar a {
@@ -263,4 +315,45 @@ body {
 
 .feature-card p {
   opacity: 0.7;
+}
+
+/* ✅ MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+
+  .chat-container {
+    padding: 5px;
+  }
+
+  .chat-messages {
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .result-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .chat-input {
+    width: 95%;
+    bottom: 10px;
+  }
+
+  .chat-input input {
+    font-size: 14px;
+  }
+
+  .chat-input button {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .top-actions {
+    top: 70px;
+    left: 10px;
+  }
 }
