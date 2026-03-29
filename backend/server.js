@@ -84,40 +84,32 @@ app.post("/api/check", async (req, res) => {
     });
 
     py.on("close", async () => {
-      try {
-        console.log("RAW DATA:", data);
+  try {
+    const result = JSON.parse(data);
 
-        const result = JSON.parse(data);
+    const probability = Math.round(result.probability);
 
-        const probability = Math.round(result.probability || 0);
+    let prediction = result.prediction === 1 ? "Scam" : "Safe";
 
-        let prediction;
-        if (probability > 60) {
-          prediction = "Scam";
-        } else if (probability > 40) {
-          prediction = "Suspicious";
-        } else {
-          prediction = "Safe";
-        }
-
-        await Scam.create({
-          message,
-          result: prediction,
-          probability
-        });
-
-        res.json({
-          probability,
-          result: prediction,
-          keywords: result.keywords || [],
-          explanation: result.explanation || []
-        });
-
-      } catch (err) {
-        console.log("❌ JSON Parse Error:", err);
-        res.status(500).json({ message: "ML parse error" });
-      }
+    await Scam.create({
+      message,
+      result: prediction,
+      probability
     });
+
+    res.json({
+      probability,
+      result: prediction,
+      confidence: probability,
+      keywords: result.keywords || [],
+      explanation: result.explanation || []
+    });
+
+  } catch (err) {
+    console.log("❌ JSON Parse Error:", err);
+    res.status(500).json({ message: "ML parse error" });
+  }
+});
 
   } catch (err) {
     console.log("❌ Server Error:", err);
