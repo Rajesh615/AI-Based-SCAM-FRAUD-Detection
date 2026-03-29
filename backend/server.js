@@ -26,6 +26,7 @@ app.use(cors({
   },
   credentials: true
 }));
+
 app.options("*", cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
@@ -36,6 +37,7 @@ app.options("*", cors({
   },
   credentials: true
 }));
+
 app.use(express.json());
 
 // ✅ ROUTES
@@ -50,6 +52,7 @@ app.get("/", (req, res) => {
 // ✅ CHECK API
 app.post("/api/check", async (req, res) => {
   console.log("API HIT");
+
   try {
     const { message } = req.body;
 
@@ -57,32 +60,34 @@ app.post("/api/check", async (req, res) => {
       return res.status(400).json({ message: "Message is required" });
     }
 
-
-    // ✅ USE FULL PATH (IMPORTANT FIX)
+    // ✅ Correct Python file path
     const scriptPath = path.join(__dirname, "ml", "predict.py");
-
     console.log("Running python from:", scriptPath);
 
-     const py = spawn("python", [scriptPath, message]);
+    // ✅ Use python (Render supports this)
+    const py = spawn("python", [scriptPath, message]);
 
     let data = "";
 
+    // ✅ FIXED: correct toString()
     py.stdout.on("data", (chunk) => {
-      console.log("PYTHON OUTPUT:",chunk.toString());
-      data+= chunk.tostring();
+      console.log("PYTHON OUTPUT:", chunk.toString());
+      data += chunk.toString();
     });
 
+    // ✅ Python errors visible
     py.stderr.on("data", (err) => {
       console.log("❌ Python Error:", err.toString());
     });
 
     py.on("close", async () => {
       try {
+        console.log("RAW DATA:", data);
+
         const result = JSON.parse(data);
 
-        const probability = Math.round(result.probability);
+        const probability = Math.round(result.probability || 0);
 
-        // ✅ YOUR UI-BASED LOGIC (GOOD 👍)
         let prediction;
         if (probability > 60) {
           prediction = "Scam";
@@ -106,7 +111,7 @@ app.post("/api/check", async (req, res) => {
         });
 
       } catch (err) {
-        console.log("❌ Parse Error:", err);
+        console.log("❌ JSON Parse Error:", err);
         res.status(500).json({ message: "ML parse error" });
       }
     });
