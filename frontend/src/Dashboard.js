@@ -12,11 +12,9 @@ function Dashboard() {
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    // ✅ Load history
     const saved = JSON.parse(localStorage.getItem("chatHistory")) || [];
     setHistory(saved);
 
-    // 🔥 PRE-WARM BACKEND
     fetch("https://ai-based-scam-fraud-detection.onrender.com/")
       .then(() => console.log("Server warmed up 🔥"))
       .catch(() => console.log("Wake failed"));
@@ -120,17 +118,14 @@ function Dashboard() {
         {history.map((item, index) => {
           const prob = item.result?.probability || 0;
 
-          // 🎯 COLOR LOGIC
+          // 🎯 COLOR LOGIC (keep this)
           const borderColor =
             prob > 60 ? "#ff4d4d" :
             prob > 40 ? "#f1c40f" :
             "#39ff14";
 
-          // 🎯 RESULT LOGIC (FIXED)
-          const resultText =
-            prob > 60 ? "Scam" :
-            prob > 40 ? "Suspicious" :
-            "Safe";
+          // ✅ FIXED RESULT (USE BACKEND VALUE)
+          const resultText = item.result?.result || "Safe";
 
           return (
             <div
@@ -154,12 +149,15 @@ function Dashboard() {
                 </p>
               )}
 
-              {/* ✅ FIXED RESULT DISPLAY */}
+              {/* ✅ CORRECT RESULT DISPLAY */}
               <p>
                 <b>Result:</b>{" "}
                 <span
                   style={{
-                    color: borderColor,
+                    color:
+                      resultText === "Scam"
+                        ? "#ff4d4d"
+                        : "#39ff14",
                     fontWeight: "bold"
                   }}
                 >
