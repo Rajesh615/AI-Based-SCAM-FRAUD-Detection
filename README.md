@@ -103,7 +103,7 @@ Result: Scam
 Suspicious Words: lottery, urgent, click
 Explanation provided
 👨‍💻 Author
-Developed by Seenu Y
+Developed by Rajesh Yathapu
 ⭐ Future Improvements
 Improve ML accuracy with larger dataset
 Deploy project online
